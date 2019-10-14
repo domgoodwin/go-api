@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/domgoodwin/go-api/app/bundles/bitbucket"
 	"github.com/domgoodwin/go-api/app/bundles/common"
 	"github.com/domgoodwin/go-api/app/bundles/db"
 	"github.com/domgoodwin/go-api/app/bundles/r53"
@@ -110,6 +111,28 @@ func (c *DeviceController) UpdateRecordSet(w http.ResponseWriter, r *http.Reques
 	}
 	println(rs.HostedZoneId)
 	res := r53.UpdateRecordSet(rs)
+	c.SendJSON(
+		w,
+		r,
+		res,
+		http.StatusOK,
+	)
+}
+
+// HandlePROpen sets record values and type of supplied domain
+func (c *DeviceController) HandlePROpen(w http.ResponseWriter, r *http.Request) {
+	var body interface{}
+	if r.Body == nil {
+		http.Error(w, "Please send a request body", 400)
+		return
+	}
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+	fmt.Println(body)
+	res := bitbucket.HandlePROpen("aaa")
 	c.SendJSON(
 		w,
 		r,
